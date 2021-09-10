@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Gandalf UI</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+</head>
+<body>
+	<div class="container">
+		<br/>
+		<div class="navbar">
+			<div class="navbar-inner">
+				<a class="brand" href="#">Gandalf</a>
+				<ul class="nav">
+					<li><a href="#">Form Servers</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="page"></div>
+	</div>
+	
+	<!-- Servers -->
+	<script type="text/template" id="server-list-template">
+	<h1>Form Servers</h1>
+	<hr />    
+	<a href="#/newServer" class="btn btn-primary">New Server</a>
+	<hr />
+    <table class="table striped">
+      <thead>
+        <tr>
+          <th>ID</th><th>Owner</th><th>Mac Address</th><th>Description</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% _.each(servers, function(server) { %>
+          <tr>
+			<td><%= htmlEncode(server.get('id')) %></td>
+            <td><%= htmlEncode(server.get('owner')) %></td>
+            <td><%= htmlEncode(server.get('macAddress')) %></td>
+            <td><%= htmlEncode(server.get('description')) %></td>
+            <td>
+					<a class="btn" href="#/editServer/<%= server.id %>">Edit or Delete</a>
+					<a class="btn" href="#/notifications/<%= server.id %>">Notifications</a>
+					<a class="btn" href="#/serverLicenses/<%= server.id %>">Licenses &gt;&gt;</a>
+			</td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+	</script>
+
+	<script type="text/template" id="edit-server-template">
+	<h1>Registered Servers</h1>
+	<hr /> 
+    <form class="edit-server-form">
+		<fieldset>
+			<legend><%= server ? 'Edit' : 'New' %> Server</legend>
+			<% if(server) { %>
+        	<label>ID</label>
+        	<input name="id" type="text" value="<%= server ? server.get('id') : '' %>" readOnly></input>
+			<% }; %>
+        	<label>Owner</label>
+        	<input name="owner" type="text" value="<%= server ? server.get('owner') : '' %>"></input>
+        	<label>Mac Address</label>
+        	<input name="macAddress" type="text" value="<%= server ? server.get('macAddress') : '' %>"></input>
+			<label>Description</label>
+        	<textarea name="description" type="text"><%= server ? server.get('description') : '' %></textarea>
+			<% if(server) { %>
+				<br/>
+				<br/>
+				<a href="#" class="btn">Generate New KeyPair</a>
+			<% } %>
+				<hr />
+	       		<button type="submit" class="btn btn-primary"><%= server ? 'Update' : 'Create' %></button>
+    	   <% if(server) { %>
+				<button data-server-id="<%= server.id %>" class="btn btn-danger deleteServer">Delete</button>
+       		<% }; %>
+		</fieldset>
+    </form>
+	</script>
+	
+	<!-- Licenses -->
+	<script type="text/template" id="server-licenses-list-template">
+	<h1>Licenses of Server</h1>
+	<form class="server-info">
+		<label>ID</label>
+		<input name="id" type="text" value="<%=server.id%>" readOnly></input>
+		<label>Description</label>
+		<input name="id" type="text" value="<%=server.description%>" readOnly></input>
+	</form>
+	<hr />
+    <a href="#/newServerLicense/<%= server.id %>" class="btn btn-primary">New License</a>
+    <hr />
+    <table class="table striped">
+      <thead>
+        <tr>
+          <th>ID</th><th>Max Applications</th><th>Creation Date</th><th>Valid Days</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% _.each(serverLicenses, function(license) { %>
+          <tr>
+			<td><%= htmlEncode(license.get('id')) %></td>
+            <td><%= htmlEncode(license.get('maxApplications')) %></td>
+            <td><%= htmlEncode(license.get('creationDate')) %></td>
+            <td><%= htmlEncode(license.get('validDays')) %></td>
+			<!-- TODO default application license -->
+            <td>
+				<button data-server-license-id="<%= license.get('id') %>" data-server-id="<%= server.id %>" class="btn btn-danger deleteServerLicense">Delete</button>
+				<a class="btn" href="<%=GANDALF_URL%>/formServer/license/download?id=<%=license.get('id')%>">Download</a>
+				<a class="btn" href="#/applicationLicenses/<%= license.get('id') %>">Application Licenses &gt;&gt;</a>
+			</td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+	</script>
+
+	<script type="text/template" id="new-server-license-template">
+	<h1>New License for Server</h1>
+	<form class="server-info">
+		<label>ID</label>
+		<input name="id" type="text" value="<%=server.id%>" readOnly></input>
+		<label>Description</label>
+		<input name="id" type="text" value="<%=server.description%>" readOnly></input>
+	</form>
+	<hr />
+    <form class="new-server-license-form">
+		<fieldset>
+        	<label>Max Applications</label>
+        	<input name="maxApplications" type="text" value="">
+			<label>Description</label>
+        	<textarea name="description"></textarea>
+			<label>Valid Days</label>
+			<input name="validDays" type="text" value="">
+			<input name="serverId" value="<%=server.id%>" type="hidden"></input>
+			<hr>
+			<h5>Default Application License</h5>
+			<label>Max Users</label>
+			<input name="maxUsers" type="text"></input>
+			<label>Max devices per User</label>
+			<input name="maxDevices" type="text"></input>
+			<label>Application Valid Days</label>
+			<input name="appValidDays" type="text"></input>
+			<br/>
+       		<button type="submit" class="btn btn-primary">Create</button>
+		</fieldset>
+    </form>
+	</script>
+
+	<!-- Application -->
+	<script type="text/template" id="application-licenses-list-template">
+	<h1>Application Licenses</h1>
+	<form class="server-license-info">
+		<label>Server License ID</label>
+		<input name="id" type="text" value="<%=serverLicense.id%>" readOnly></input>
+	</form>
+	<hr />
+    <a href="#/newApplicationLicense/<%= serverLicense.id %>" class="btn btn-primary">New Application License</a>
+    <hr />
+    <table class="table striped">
+      <thead>
+        <tr>
+          <th>ID</th><th>Application ID</th><th>Max Devices</th><th>Max Users</th><th>Valid Days</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% _.each(applicationLicenses, function(appLicense) { %>
+          <tr>
+			<td><%= htmlEncode(appLicense.get('id')) %></td>
+			<td><%= htmlEncode(appLicense.get('applicationId')) %></td>
+            <td><%= htmlEncode(appLicense.get('maxDevices')) %></td>
+            <td><%= htmlEncode(appLicense.get('maxUsers')) %></td>
+            <td><%= htmlEncode(appLicense.get('validDays')) %></td>
+            <td>
+				<button data-application-license-id="<%= appLicense.get('id') %>" data-server-license-id="<%= serverLicense.id %>" class="btn btn-danger deleteApplicationLicense">Delete</button>
+				<a class="btn" href="<%=GANDALF_URL%>/application/download?id=<%=appLicense.get('id')%>&format=text">Download</a>
+			</td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+	</script>
+	
+	<script type="text/template" id="new-application-license-template">
+	<h1>New Application License</h1>
+	<form class="server-license-info">
+		<label>Server License ID</label>
+		<input name="id" type="text" value="<%=serverLicense.id%>" readOnly></input>
+	</form>
+	<hr />
+    <form class="new-application-license-form">
+		<fieldset>
+			<label>Application ID</label>
+			<input name="applicationId" type="text"></input>
+			<label>Owner</label>
+			<input name="owner" type="text"></input>
+			<label>Max Users</label>
+			<input name="maxUsers" type="text"></input>
+			<label>Max devices per User</label>
+			<input name="maxDevices" type="text"></input>
+			<label>Application Valid Days</label>
+			<input name="validDays" type="text"></input>
+			<input name="formServerLicenseId" value="<%=serverLicense.id%>" type="hidden"></input>
+			<br/>
+       		<button type="submit" class="btn btn-primary">Create</button>
+		</fieldset>
+    </form>
+	</script>
+	
+	<script type="text/template" id="notifications-list-template">
+	<h1>Notifications</h1>
+	<hr/>
+ 	<table class="table striped">
+      <thead>
+        <tr>
+			<th>ID</th>
+			<th>Server ID</th>
+			<th>License ID</th>
+			<th>Notification Type</th>
+			<th>Received At</th>
+			<th>Mac Address</th>
+			<th>Remote Address</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% _.each(notifications, function(notification) { %>
+          <tr>
+			<td><%= htmlEncode(notification.get('id')) %></td>
+			<td><%= htmlEncode(notification.get('serverId')) %></td>
+			<td><%= htmlEncode(notification.get('serverLicenseId')) %></td>
+            <td><%= htmlEncode(notification.get('notificationType')) %></td>
+            <td><%= htmlEncode(notification.get('receivedAt')) %></td>
+			<td><%= htmlEncode(notification.get('macAddress')) %></td>
+			<td><%= htmlEncode(notification.get('remoteAddress')) %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+	</script>
+	
+	<script type="text/template" id="server-new-application-template">
+	</script>
+
+	<script src="js/jquery.min.js" type="text/javascript"></script>
+	<script src="js/underscore-min.js" type="text/javascript"></script>
+	<script src="js/backbone-min.js" type="text/javascript"></script>
+	<script src="js/init.js" type="text/javascript"></script>
+	<script src="js/gandalf-ui.js" type="text/javascript"></script>
+</body>
+</html>

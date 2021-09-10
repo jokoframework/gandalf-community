@@ -1,0 +1,22 @@
+<h1>Form Servers</h1>
+<hr />    
+<a href="#/newServer" class="btn btn-primary">New Server</a>
+<hr />
+<table class="table striped">
+  <thead>
+    <tr>
+      <th>ID</th><th>Owner</th><th>Mac Address</th><th>Description</th><th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% _.each(servers, function(server) { %>
+      <tr>
+		<td><%= htmlEncode(server.get('id')) %></td>
+        <td><%= htmlEncode(server.get('owner')) %></td>
+        <td><%= htmlEncode(server.get('macAddress')) %></td>
+        <td><%= htmlEncode(server.get('description')) %></td>
+        <td><a class="btn" href="#/editServer/<%= server.id %>">Edit</a> <a class="btn" href="#/serverLicenses/<%= server.id %>">Licenses</a></td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>

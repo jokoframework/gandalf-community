@@ -1,0 +1,27 @@
+<h1>Registered Servers</h1>
+<hr /> 
+<form class="edit-server-form">
+	<fieldset>
+		<legend><%= server ? 'Edit' : 'New' %> Server</legend>
+		<% if(server) { %>
+    	<label>ID</label>
+    	<input name="id" type="text" value="<%= server ? server.get('id') : '' %>" readOnly></input>
+		<% }; %>
+    	<label>Owner</label>
+    	<input name="owner" type="text" value="<%= server ? server.get('owner') : '' %>"></input>
+    	<label>Mac Address</label>
+    	<input name="macAddress" type="text" value="<%= server ? server.get('macAddress') : '' %>"></input>
+		<label>Description</label>
+    	<textarea name="description" type="text"><%= server ? server.get('description') : '' %></textarea>
+		<% if(server) { %>
+			<br/>
+			<br/>
+			<a href="#" class="btn">Generate New KeyPair</a>
+		<% } %>
+			<hr />
+       		<button type="submit" class="btn btn-primary"><%= server ? 'Update' : 'Create' %></button>
+	   <% if(server) { %>
+			<button data-server-id="<%= server.id %>" class="btn btn-danger deleteServer">Delete</button>
+   		<% }; %>
+	</fieldset>
+</form>

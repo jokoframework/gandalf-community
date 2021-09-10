@@ -1,0 +1,15 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>py.com.sodep.captura</groupId>
+	<artifactId>gandalf</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>gandalf</name>
+	<description>License Server</description>
+	<modules>
+		<module>captura_license_server</module>
+		<module>captura_license_api</module>
+	</modules>
+	<build />
+</project>

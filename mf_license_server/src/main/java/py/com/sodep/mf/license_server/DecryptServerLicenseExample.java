@@ -1,0 +1,36 @@
+package py.com.sodep.mf.license_server;
+
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+
+import py.com.sodep.mobileforms.license.crypto.CryptoUtils;
+
+public class DecryptServerLicenseExample {
+
+	private static final String LS_PUBLIC_KEY = "30819f300d06092a864886f70d010101050003818d0030818902818100ad155c50f5f3e1255a0ad7e39da9510d1bc91fefd6d35c77c80255556d402a731f67847c4a5b60672fa3b4c9d9197e0cf0cf0b72da01675e6db5c4f81d6e17d0723cc7e22543d65db86b083563736e5e5a8a687dc56f2219e6ce2f2e79a0d265fd1a350b46f8cca5c6c028edb6470e5c0800a46ab5cfd0977ff5e0367cdc7ed90203010001";
+
+	private static final String FS_ENCRYPTED_PUBLIC_KEY = "a91a385bf141f5b36165d6391a13029aae6b1e3aead642bf998db0102be59bdbbf87d4e73dfd4b691d4a46f897cf93fc84b43723a1534529d2cde0c0189e1ed989abd90d11f91a5d14df29ebf4155a4bde9b63aa6f16a7d9cf207e985863c110626d22b18fe67516f6ab1210f06f2a5094d8ea2a9574f8305d53b373ec5b4f23606c64ad009f23cf74e72a65a5eec0a1be725bc81502aa76139b1e02b09ed577bd482fd93ed8cba9e56e57f55373aa2317a54365798422dce7c3bafc42d80e7778d52fdd6006937addbf4d691ca9f9db0e1ddf0bafd61c345ca36ae3655345305331a9a69335a1588f366bf5b769a20fd467df13ec6508a28f0e7b76a7ae420e";
+
+	public static void main(String[] args) throws InvalidKeySpecException {
+
+		PublicKey lsPublicKey = CryptoUtils.getPublicKey(CryptoUtils.fromHexString(LS_PUBLIC_KEY));
+		PublicKey fsPublicKey = getFSPublicKey(lsPublicKey);
+
+		String license = "0d6591bce5a57a036c7524c9d5bb9d987454e633c499e4cbea385ee2cddb77298f87d27b1d1c3f57459328b5a3a4a14d33ba4aaefa6ee7f04a420bafb05d9e83e400458a070836cd7bc89425aef8b3c079f7d432295c9e3e7bd53e2ff603d9a8f8961e98c7e6d5af0d3287e6c160892d435656d2d0f1bca94898fb7f9f6d2c9565d2d9b6f7452336eda89bdf7fb6440ac160889fe5e9e4ad4cfda337d0b43b16640e1688de01693fa453a67b0521b62c4f96fd7985aab0d1c581d7d19fd1fec7b6bc0dfd28690b37a24ecfaf99d0faceeab5742dd91d9f102ea786eeb5d221cdcf9587b1348e43edd85cfbec3f57b6a812dedcb6c8e52fe3af4064478cd29e96";
+		byte[] fromHexString = CryptoUtils.fromHexString(license);
+
+		byte[] decrypted01 = CryptoUtils.decrypt(fromHexString, lsPublicKey);
+		byte[] decrypted02 = CryptoUtils.decrypt(decrypted01, fsPublicKey);
+		
+		String s = new String(decrypted02);
+		System.out.println(s);
+	}
+
+	private static PublicKey getFSPublicKey(PublicKey lsPublicKey) throws InvalidKeySpecException {
+		byte[] encryptedBytes = CryptoUtils.fromHexString(FS_ENCRYPTED_PUBLIC_KEY);
+		byte[] decryptedBytes = CryptoUtils.decrypt(encryptedBytes, lsPublicKey);
+		PublicKey key = CryptoUtils.getPublicKey(decryptedBytes);
+		return key;
+	}
+
+}
