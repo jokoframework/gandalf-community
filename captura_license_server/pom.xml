@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>py.com.sodep.captura</groupId>
 		<artifactId>gandalf</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.1</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -27,7 +27,7 @@
 	<dependencies>
 		<!-- License API -->
 		<dependency>
-			<groupId>py.com.sodep.mf</groupId>
+			<groupId>py.com.sodep.captura</groupId>
 			<artifactId>license-api</artifactId>
 			<version>${license.api-version}</version>
 		</dependency>
